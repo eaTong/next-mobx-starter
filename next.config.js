@@ -74,7 +74,7 @@ module.exports = {
       config.plugins.push(new ExtractTextPlugin('/static/app.css'));
     } else {
       config.module.rules.push({
-        test: /\.scss$/,
+        test: /\.s[ac]ss$/,
         use: [
           {loader: 'raw-loader'},
           {
@@ -88,6 +88,24 @@ module.exports = {
           },
           {
             loader: 'sass-loader',
+            options: {sourceMap: true},
+          },
+        ],
+      },{
+        test: /\.less$/,
+        use: [
+          {loader: 'raw-loader'},
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: 'inline',
+              plugins: () => [
+                autoprefixer(),
+              ],
+            },
+          },
+          {
+            loader: 'less-loader',
             options: {sourceMap: true},
           },
         ],
