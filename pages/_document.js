@@ -14,8 +14,7 @@ export default class MyDocument extends Document {
           ? <link
             rel="stylesheet"
             type="text/css"
-            href={`/static/styles/app.css?${this.props.__NEXT_DATA__
-              .buildStats['app.js'].hash}`}
+            href={`/app.css?${this.props.__NEXT_DATA__.buildStats['app.js'].hash}`}
           />
           : <style
             global

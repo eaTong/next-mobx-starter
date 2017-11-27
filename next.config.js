@@ -1,109 +1,97 @@
 const path = require('path');
 const glob = require('glob');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+
 
 module.exports = {
   webpack: (config, {dev}) => {
-    if (dev) {
-      config.module.rules.push(
+    config.module.rules.push({
+      test: /(\.s[ac]ss$)|(\.css$)|(\.less$)/,
+      loader: 'emit-file-loader',
+      options: {
+        name: 'dist/[path][name].[ext]',
+      },
+    });
+
+    if (!dev) {
+      const preLoader = [{
+        loader: 'css-loader',
+        options: {
+          importLoaders: 2,
+          modules: false,
+          url: true,
+          sourceMap: false,
+          minimize: true,
+          localIdentName: false ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]',
+        },
+      },
         {
-          test: /\.(css|less|sass|scss)/,
-          loader: 'emit-file-loader',
+          loader: 'postcss-loader',
           options: {
-            name: 'dist/[path][name].[ext]'
-          }
-        }, {
-          test: /\.css$/,
-          use: ['babel-loader', 'raw-loader', 'postcss-loader']
-        }, {
-          test: /\.less$/,
-          use: ['babel-loader', 'raw-loader', 'postcss-loader',
-            {
-              loader: 'less-loader',
-              options: {
-                includePaths: ['styles', 'node_modules']
-                  .map((d) => path.join(__dirname, d))
-                  .map((g) => glob.sync(g))
-                  .reduce((a, c) => a.concat(c), [])
-              }
-            }
-          ]
-        }, {
-          test: /\.s[ac]ss$/,
-          use: ['babel-loader', 'raw-loader', 'postcss-loader',
-            {
-              loader: 'sass-loader',
-              options: {
-                includePaths: ['styles', 'node_modules']
-                  .map((d) => path.join(__dirname, d))
-                  .map((g) => glob.sync(g))
-                  .reduce((a, c) => a.concat(c), [])
-              }
-            }
-          ]
-        }
-      );
-    } else {
+            sourceMap: true,
+            plugins: () => [
+              autoprefixer(),
+            ],
+          },
+        }];
       config.module.rules.push({
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 2,
-                modules: false,
-                url: true,
-                sourceMap: false,
-                minimize: true,
-                localIdentName: '[hash:base64:5]'
-              }
-            },
-            {loader: 'postcss-loader'}
-          ]
-        })
-      }, {
-        test: /\.less$/,
-        use: ExtractTextPlugin.extract({
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 2,
-                modules: false,
-                url: true,
-                sourceMap: false,
-                minimize: true,
-                localIdentName: '[hash:base64:5]'
-              }
-            },
-            {loader: 'postcss-loader'},
-            {loader: 'less-loader'}
-          ]
-        })
-      }, {
         test: /\.s[ac]ss$/,
         use: ExtractTextPlugin.extract({
           use: [
+            ...preLoader,
             {
-              loader: 'css-loader',
+              loader: 'sass-loader',
               options: {
-                importLoaders: 2,
-                modules: false,
-                url: true,
-                sourceMap: false,
-                minimize: true,
-                localIdentName: '[hash:base64:5]'
-              }
+                sourceMap: true,
+                includePaths: [
+                  path.resolve(__dirname, 'scss'),
+                  path.resolve(__dirname, 'pages'),
+                ],
+              },
             },
-            {loader: 'postcss-loader'},
-            {loader: 'sass-loader'},
-          ]
-        })
+          ],
+        }),
+      },{
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
+          use: [
+            ...preLoader,
+            {
+              loader: 'less-loader',
+              options: {
+                sourceMap: true,
+                includePaths: [
+                  path.resolve(__dirname, 'scss'),
+                  path.resolve(__dirname, 'pages'),
+                ],
+              },
+            },
+          ],
+        }),
       });
-      config.plugins.push(
-        new ExtractTextPlugin('styles.css')
-      );
+
+      config.plugins.push(new ExtractTextPlugin('/static/app.css'));
+    } else {
+      config.module.rules.push({
+        test: /\.scss$/,
+        use: [
+          {loader: 'raw-loader'},
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: 'inline',
+              plugins: () => [
+                autoprefixer(),
+              ],
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {sourceMap: true},
+          },
+        ],
+      });
     }
 
     return config
