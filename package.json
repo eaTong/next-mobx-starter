@@ -2,6 +2,7 @@
   "scripts": {
     "dev": "node index",
     "build": "next build",
+    "build-server":"webpack --config server.config.js",
     "start": "NODE_ENV=production node index"
   },
   "dependencies": {
@@ -43,6 +44,6 @@
     "normalize.css": "^7.0.0",
     "postcss-easy-import": "^3.0.0",
     "postcss-loader": "^2.0.8",
-    "raw-loader": "^0.5.1",
+    "raw-loader": "^0.5.1"
   }
 }
