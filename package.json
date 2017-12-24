@@ -2,7 +2,6 @@
   "scripts": {
     "dev": "node index",
     "build": "next build",
-    "build-server":"webpack --config server.config.js",
     "start": "NODE_ENV=production node index"
   },
   "dependencies": {
