@@ -1,12 +1,12 @@
 /**
  * Created by eatong on 17-11-7.
  */
-import {checkArgument} from '../framework/apiDecorator';
-import {LogicError} from '../framework/errors';
+const {checkArgument} = require('../framework/apiDecorator');
+const {LogicError} = require('../framework/errors');
 
-export default class UserApi {
+module.exports = class UserApi {
 
-  @checkArgument(['user', 'password'])
+  // @checkArgument(['user', 'password'])
   static async login(ctx) {
     const data = ctx.request.body;
     if (data.user === '18288756143' && data.password === 'eatong123') {
@@ -16,4 +16,4 @@ export default class UserApi {
       throw (new LogicError('账号或密码错误'));
     }
   }
-}
+};

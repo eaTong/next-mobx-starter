@@ -1,7 +1,7 @@
-import Router from 'koa-router';
-import TodoApi from './apis/todoApi';
-import UserApi from './apis/userApi';
-import {ArgMissError} from './framework/errors';
+const Router = require('koa-router');
+const TodoApi = require('./apis/todoApi');
+const UserApi = require('./apis/userApi');
+const {ArgMissError} = require('./framework/errors');
 
 const router = new Router();
 //define data structure for all API
@@ -32,4 +32,11 @@ router.post('/api/*', async ctx => {
   ctx.body = 'api not found';
 });
 
-export default router;
+
+function test(a) {
+  return function (ctx, next) {
+
+  }
+}
+
+module.exports = router;

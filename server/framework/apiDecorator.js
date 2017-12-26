@@ -1,9 +1,9 @@
 /**
  * Created by eatong on 17-11-6.
  */
-import {ArgMissError} from './errors';
+const {ArgMissError} = require('./errors');
 
-export function checkArgument(args) {
+exports.checkArgument = function (args) {
   return function (target, name, descriptor) {
     const oldValue = descriptor.value;
     descriptor.value = function () {
